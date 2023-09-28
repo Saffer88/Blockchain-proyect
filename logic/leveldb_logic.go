@@ -2,6 +2,7 @@ package logic
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 
 	"github.com/syndtr/goleveldb/leveldb"
@@ -69,4 +70,18 @@ func CountTotalBlocks(db *leveldb.DB) (int, error) {
 		return 0, err
 	}
 	return count, nil
+}
+
+func GetTotalTransactions(db *leveldb.DB, blockIndex int) (int, error) {
+	key := []byte(fmt.Sprintf("%d", blockIndex))
+	data, err := db.Get(key, nil)
+	if err != nil {
+		return 0, err
+	}
+	var block Block
+	err = json.Unmarshal(data, &block)
+	if err != nil {
+		return 0, err
+	}
+	return len(block.Transactions), nil
 }

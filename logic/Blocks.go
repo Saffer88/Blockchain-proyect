@@ -1,7 +1,10 @@
 package logic
 
 import (
+	"fmt"
 	"time"
+
+	"github.com/syndtr/goleveldb/leveldb"
 )
 
 type Block struct {
@@ -14,7 +17,12 @@ type Block struct {
 	Nonce        int
 }
 
-func GenerateBlock(prevBlock Block, transactions []Transaction, limit int) Block {
+func GenerateBlock(db *leveldb.DB, transactions []Transaction, limit int) Block {
+	prevBlock, err := GetLastBlock(db)
+	if err != nil {
+		fmt.Println("Error al obtener el último bloque:", err)
+		panic(err)
+	}
 	var block Block
 	block.Index = prevBlock.Index + 1
 	block.Timestamp = time.Now().Unix()
@@ -24,4 +32,21 @@ func GenerateBlock(prevBlock Block, transactions []Transaction, limit int) Block
 	block.Limit = limit
 	block.Hash = CalculateHash(block)
 	return block
+}
+
+func Limit(db *leveldb.DB) bool {
+
+	lastBlock, err := GetLastBlock(db)
+	if err != nil {
+		fmt.Println("Error al obtener el último bloque:", err)
+	}
+	limit, err := GetTotalTransactions(db, lastBlock.Index)
+	if err != nil {
+		fmt.Println("Error al obtener la cantidad de transacciones:", err)
+	}
+	if lastBlock.Limit > limit {
+		return false
+	}
+
+	return true
 }

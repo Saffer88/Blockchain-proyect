@@ -18,7 +18,7 @@ func main() {
 
 	for {
 		{
-			fmt.Print("\033[H\033[2J") // Limpia la pantalla (compatible con sistemas Unix)
+			fmt.Print("\033[H\033[2J")
 			fmt.Println(`
             ~~~~ Bienvenido al sistema blockchain ~~~~
 
@@ -42,14 +42,8 @@ func main() {
 				~~~~ Agregando nuevo bloque ~~~~~~
 				     ~~~~~~~~~~~~~~~~~~~~~~
                 `)
-				lastBlock, err := logic.GetLastBlock(db)
-				if err != nil {
-					fmt.Println("Error al obtener el último bloque:", err)
-					return
-				}
-				fmt.Printf("\n\nEl nuevo bloque es: \n\n")
 
-				newblock := logic.GenerateBlock(lastBlock, nil, 10)
+				newblock := logic.GenerateBlock(db, nil, 1)
 
 				logic.Pretty(newblock)
 
@@ -60,7 +54,6 @@ func main() {
 
 				time.Sleep(1 * time.Second)
 				fmt.Println("\n\nRegistro completado.")
-
 				fmt.Print("\n\n\nPress Enter... ")
 				var wait int
 				fmt.Scanln(&wait)
@@ -72,10 +65,10 @@ func main() {
 				     ~~~~~~~~~~~~~~~~~~~~~~
                 `)
 
-				fmt.Print("\ningrese su usuario: ")
+				fmt.Print("\ningrese su dirección: ")
 				var user string
 				fmt.Scanln(&user)
-				fmt.Print("\ningrese el destinatario: ")
+				fmt.Print("\ningrese la dirección del destinatario: ")
 				var receiver string
 				fmt.Scanln(&receiver)
 				fmt.Print("\ningrese el monto: ")
@@ -84,31 +77,56 @@ func main() {
 
 				newTransaction := logic.NewTransaction(user, receiver, mount)
 
-				lastBlock, err := logic.GetLastBlock(db)
-				if err != nil {
-					fmt.Println("\nError al obtener el último bloque:", err)
-					return
+				blockIsFull := logic.Limit(db)
+
+				if blockIsFull {
+					fmt.Println("\nEl último bloque está lleno, así que se creará un nuevo bloque")
+
+					fmt.Print("\nIndique el límite de transacciones del bloque: ")
+					var limit int
+					fmt.Scanln(&limit)
+
+					transactions := []logic.Transaction{newTransaction}
+					newblock := logic.GenerateBlock(db, transactions, limit)
+					err = logic.SaveBlockToDB(newblock, db)
+					if err != nil {
+						panic(err)
+					}
+					fmt.Println("\nSe ha creado el bloque correctamente")
+					logic.Pretty(newblock)
+
+					fmt.Print("\n\n\nEnter... ")
+					var wait int
+					fmt.Scanln(&wait)
+
+				} else {
+					lastBlock, err := logic.GetLastBlock(db)
+					if err != nil {
+						fmt.Println("\nError al obtener el último bloque", err)
+						panic(err)
+					}
+
+					logic.AddTransaction(&lastBlock, newTransaction)
+
+					err = logic.SaveBlockToDB(lastBlock, db)
+					if err != nil {
+						panic(err)
+					}
+
+					fmt.Println("\nSe ha escrito la información en el bloque:")
+
+					searchblock, err := logic.GetBlockFromDB(lastBlock.Index, db)
+					if err != nil {
+						panic(err)
+					}
+
+					logic.Pretty(searchblock)
+
+					fmt.Print("\n\n\nEnter... ")
+					var wait int
+					fmt.Scanln(&wait)
+
 				}
-
-				logic.AddTransaction(&lastBlock, newTransaction)
-
-				err = logic.SaveBlockToDB(lastBlock, db)
-				if err != nil {
-					panic(err)
-				}
-
-				fmt.Println("\nSe ha escrito la información en el bloque:")
-
-				searchblock, err := logic.GetBlockFromDB(lastBlock.Index, db)
-				if err != nil {
-					panic(err)
-				}
-
-				logic.Pretty(searchblock)
-
-				fmt.Print("\n\n\nEnter... ")
-				var wait int
-				fmt.Scanln(&wait)
 
 			case "3":
 				fmt.Print("\033[H\033[2J")
