@@ -85,3 +85,20 @@ func GetTotalTransactions(db *leveldb.DB, blockIndex int) (int, error) {
 	}
 	return len(block.Transactions), nil
 }
+
+func CreateGenesis(db *leveldb.DB) {
+	iter := db.NewIterator(nil, nil)
+	defer iter.Release()
+	if !iter.First() {
+		fmt.Print("\nCreando bloque Genesis.\n\n")
+		genesis := Genesis()
+		err := SaveBlockToDB(genesis, db)
+		if err != nil {
+			panic(err)
+		}
+		Pretty(genesis)
+		fmt.Print("\n\nEnter... ")
+		var wait int
+		fmt.Scanln(&wait)
+	}
+}

@@ -14,21 +14,7 @@ func main() {
 		panic(err)
 	}
 	defer db.Close()
-	iter := db.NewIterator(nil, nil)
-	defer iter.Release()
-	// Verifica si la base de datos está vacía
-	if !iter.First() { // Si está vacía agregamos el bloque genesis
-		fmt.Println("\nCreando bloque Genesis.")
-		genesis := logic.Genesis()
-		err = logic.SaveBlockToDB(genesis, db)
-		if err != nil {
-			panic(err)
-		}
-		logic.Pretty(genesis)
-		fmt.Print("\n\nEnter... ")
-		var wait int
-		fmt.Scanln(&wait)
-	}
+	logic.CreateGenesis(db) // Evaluamos si es necesario crear el bloque genesis
 
 	for { // despliegue de las opciones
 		{
@@ -137,15 +123,19 @@ func main() {
 
 				searchblock, err := logic.GetBlockFromDB(ID, db)
 				if err != nil {
-					panic(err)
+					fmt.Print("\nEl bloque no existe.")
+					fmt.Print("\n\nPress Enter... ")
+					var wait int
+					fmt.Scanln(&wait)
+				} else {
+					fmt.Print("\nEl bloque con el ID correspondiente es el siguiente:\n\n")
+					logic.Pretty(searchblock)
+
+					fmt.Print("\n\nPress Enter... ")
+					var wait int
+					fmt.Scanln(&wait)
 				}
 
-				fmt.Print("\nEl bloque con el ID correspondiente es el siguiente:\n\n")
-				logic.Pretty(searchblock)
-
-				fmt.Print("\n\nPress Enter... ")
-				var wait int
-				fmt.Scanln(&wait)
 			case "5":
 
 			case "6":
