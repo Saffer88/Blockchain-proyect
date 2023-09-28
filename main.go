@@ -9,24 +9,40 @@ import (
 )
 
 func main() {
-
 	db, err := leveldb.OpenFile("./level.db", nil)
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
+	iter := db.NewIterator(nil, nil)
+	defer iter.Release()
+	// Verifica si la base de datos está vacía
+	if !iter.First() { // Si está vacía agregamos el bloque genesis
+		fmt.Println("\nCreando bloque Genesis.")
+		genesis := logic.Genesis()
+		err = logic.SaveBlockToDB(genesis, db)
+		if err != nil {
+			panic(err)
+		}
+		logic.Pretty(genesis)
+		fmt.Print("\n\nEnter... ")
+		var wait int
+		fmt.Scanln(&wait)
+	}
 
-	for {
+	for { // despliegue de las opciones
 		{
 			fmt.Print("\033[H\033[2J")
 			fmt.Println(`
             ~~~~ Bienvenido al sistema blockchain ~~~~
-
-            1. DEBUG Crear un bloque
-            2. Escribir una transacción
-            3. Leer información de un bloque
-            4. Consultar los bloques totales
-
+            1. Crear cuenta.
+            2. Ver todas las cuentas existentes.
+            3. Escribir una transacción.
+            4. Búsqueda de bloque específico usando ID.
+            5. Búsqueda de bloque usando transacción.
+            6. DEBUG Crear un bloque vacío.
+            7. DEBUG Consultar los bloques totales.
+            8. DEBUG Volcar todos los bloques.
             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             `)
 			fmt.Print("\nOpción: ")
@@ -37,28 +53,10 @@ func main() {
 			switch opcion {
 
 			case "1":
-				fmt.Print("\033[H\033[2J")
-				fmt.Println(`
-				~~~~ Agregando nuevo bloque ~~~~~~
-				     ~~~~~~~~~~~~~~~~~~~~~~
-                `)
-
-				newblock := logic.GenerateBlock(db, nil, 1)
-
-				logic.Pretty(newblock)
-
-				err = logic.SaveBlockToDB(newblock, db)
-				if err != nil {
-					panic(err)
-				}
-
-				time.Sleep(1 * time.Second)
-				fmt.Println("\n\nRegistro completado.")
-				fmt.Print("\n\n\nPress Enter... ")
-				var wait int
-				fmt.Scanln(&wait)
 
 			case "2":
+
+			case "3":
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
 				~~~~ Escribir una transacción ~~~~~
@@ -95,7 +93,7 @@ func main() {
 					fmt.Println("\nSe ha creado el bloque correctamente")
 					logic.Pretty(newblock)
 
-					fmt.Print("\n\n\nEnter... ")
+					fmt.Print("\n\nEnter... ")
 					var wait int
 					fmt.Scanln(&wait)
 
@@ -122,13 +120,12 @@ func main() {
 
 					logic.Pretty(searchblock)
 
-					fmt.Print("\n\n\nEnter... ")
+					fmt.Print("\n\nEnter... ")
 					var wait int
 					fmt.Scanln(&wait)
 
 				}
-
-			case "3":
+			case "4":
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
 				~~~~ Leer un Bloque ~~~~
@@ -149,8 +146,33 @@ func main() {
 				fmt.Print("\n\nPress Enter... ")
 				var wait int
 				fmt.Scanln(&wait)
+			case "5":
 
-			case "4":
+			case "6":
+
+				fmt.Print("\033[H\033[2J")
+				fmt.Println(`
+				~~~~ Agregando nuevo bloque ~~~~~~
+				     ~~~~~~~~~~~~~~~~~~~~~~
+                `)
+
+				newblock := logic.GenerateBlock(db, nil, 3)
+
+				logic.Pretty(newblock)
+
+				err = logic.SaveBlockToDB(newblock, db)
+				if err != nil {
+					panic(err)
+				}
+
+				time.Sleep(1 * time.Second)
+				fmt.Println("\n\nRegistro completado.")
+				fmt.Print("\n\nPress Enter... ")
+				var wait int
+				fmt.Scanln(&wait)
+
+			case "7":
+
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
 				~~~~ Consultar bloques totales ~~~~~
@@ -165,9 +187,11 @@ func main() {
 
 				fmt.Printf("Cantidad total de bloques: %d\n", totalBlocks)
 
-				fmt.Print("\n\n\nPress Enter... ")
+				fmt.Print("\n\nPress Enter... ")
 				var wait int
 				fmt.Scanln(&wait)
+
+			case "8":
 
 			default:
 				fmt.Println("Opción no válida. Intente de nuevo.")

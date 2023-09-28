@@ -50,3 +50,16 @@ func Limit(db *leveldb.DB) bool {
 
 	return true
 }
+
+func Genesis() Block {
+	var block Block
+	block.Index = 1
+	block.Timestamp = time.Now().Unix()
+	block.Transactions = nil
+	block.PrevHash = "1231231231231231231231231231231231231231231231231231231231231231"
+	block.Nonce = 1
+	block.Limit = 0
+	block.Hash = CalculateHash(block)
+	return block
+
+}
