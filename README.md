@@ -1,3 +1,6 @@
 # Blockchain-proyect
 
-Integrantes: Mirko Babic, Javier Romo, 
+
+## Demostración del funcionamiento 
+
+Integrantes: Mirko Babic, Javier Romo, Nicolás 
