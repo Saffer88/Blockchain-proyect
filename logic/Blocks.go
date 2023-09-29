@@ -58,7 +58,7 @@ func Limit(db *leveldb.DB) bool {
 
 func Genesis() Block {
 	var block Block
-	block.Index = 1
+	block.Index = 0
 	block.Timestamp = time.Now().Unix()
 	block.Transactions = []Transaction{
 		{
@@ -68,10 +68,9 @@ func Genesis() Block {
 			Signature: "",
 		},
 	}
-	block.PrevHash = "1231231231231231231231231231231231231231231231231231231231231231"
+	block.PrevHash = "0000000000000000000000000000000000000000000000000000000000000000"
 	block.Nonce = 1
 	block.Limit = 0
 	block.Hash = CalculateHash(block)
 	return block
-
 }
