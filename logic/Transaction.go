@@ -4,6 +4,8 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 type Transaction struct {
@@ -13,26 +15,72 @@ type Transaction struct {
 	Signature string
 }
 
-func NewTransaction(sender, receiver string, amount float64) Transaction {
-	transaction := Transaction{
+func AddTransaction(block *Block, transaction Transaction) {
+	block.Transactions = append(block.Transactions, transaction)
+}
+
+func NewTransaction(sender string, receiver string, amount float64, privateKeyHex string) (*Transaction, error) {
+	// Convert hex private key to *ecdsa.PrivateKey
+	privateKeyBytes, err := hex.DecodeString(privateKeyHex)
+	if err != nil {
+		return nil, err
+	}
+
+	privateKey, err := crypto.ToECDSA(privateKeyBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	txData := fmt.Sprintf("%s%s%f", sender, receiver, amount)
+	hash := sha256.Sum256([]byte(txData))
+
+	sig, err := crypto.Sign(hash[:], privateKey) // firma
+	if err != nil {
+		return nil, err
+	}
+
+	// Construct Transaction object
+	tx := &Transaction{
 		Sender:    sender,
 		Receiver:  receiver,
 		Amount:    amount,
-		Signature: SignTransaction(sender, receiver, amount),
+		Signature: hex.EncodeToString(sig),
 	}
-	return transaction
+
+	return tx, nil
 }
 
-func SignTransaction(sender string, receiver string, amount float64) string {
-	transactionDetails := fmt.Sprintf("%s%s%f", sender, receiver, amount)
-	h := sha256.New()
-	h.Write([]byte(transactionDetails))
-	hash := hex.EncodeToString(h.Sum(nil))
-	// Firmar el hash con la clave privada del emisor
-	signature := sender + hash
-	return signature
-}
+func VerifyTransaction(sender string, receiver string, amount float64, signature, publicKeyHex string) bool {
 
-func AddTransaction(block *Block, transaction Transaction) {
-	block.Transactions = append(block.Transactions, transaction)
+	txData := fmt.Sprintf("%s%s%f", sender, receiver, amount)
+	hash := sha256.Sum256([]byte(txData))
+
+	sig, err := hex.DecodeString(signature)
+	if err != nil {
+		fmt.Println("Error decoding signature:", err)
+		return false
+	}
+
+	publicKeyBytes, err := hex.DecodeString(publicKeyHex)
+	if err != nil {
+		fmt.Println("Error decoding public key:", err)
+		return false
+	}
+
+	// Agrega el byte 0x04 al inicio del publicKeyBytes
+	publicKeyBytes = append([]byte{0x04}, publicKeyBytes...)
+
+	if len(publicKeyBytes) != 65 {
+		fmt.Println("Invalid public key length")
+		return false
+	}
+
+	publicKey, err := crypto.UnmarshalPubkey(publicKeyBytes)
+	if err != nil {
+		fmt.Println("Error unmarshaling public key:", err)
+		return false
+	}
+
+	isValidSig := crypto.VerifySignature(crypto.FromECDSAPub(publicKey), hash[:], sig[:len(sig)-1])
+	return isValidSig
 }

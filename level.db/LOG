@@ -1,6 +1,64 @@
-=============== Sep 28, 2023 (-03) ===============
-19:03:39.465144 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
-19:03:39.486992 db@open opening
-19:03:39.488048 version@stat F·[] S·0B[] Sc·[]
-19:03:39.490121 db@janitor F·2 G·0
-19:03:39.490121 db@open done T·3.1284ms
+=============== Sep 29, 2023 (-03) ===============
+00:00:07.503185 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+00:00:07.527505 db@open opening
+00:00:07.528537 version@stat F·[] S·0B[] Sc·[]
+00:00:07.530661 db@janitor F·2 G·0
+00:00:07.530661 db@open done T·3.1558ms
+=============== Sep 29, 2023 (-03) ===============
+00:06:56.146336 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+00:06:56.165784 version@stat F·[] S·0B[] Sc·[]
+00:06:56.165784 db@open opening
+00:06:56.165784 journal@recovery F·1
+00:06:56.166296 journal@recovery recovering @1
+00:06:56.170371 memdb@flush created L0@2 N·2 S·590B "1,v1":"2,v2"
+00:06:56.170882 version@stat F·[1] S·590B[590B] Sc·[0.25]
+00:06:56.178882 db@janitor F·3 G·0
+00:06:56.178882 db@open done T·13.0985ms
+=============== Sep 29, 2023 (-03) ===============
+00:09:42.079965 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+00:09:42.099305 version@stat F·[1] S·590B[590B] Sc·[0.25]
+00:09:42.099305 db@open opening
+00:09:42.099305 journal@recovery F·1
+00:09:42.100325 journal@recovery recovering @3
+00:09:42.100841 version@stat F·[1] S·590B[590B] Sc·[0.25]
+00:09:42.108418 db@janitor F·3 G·0
+00:09:42.108418 db@open done T·9.1134ms
+=============== Sep 29, 2023 (-03) ===============
+00:10:51.516641 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+00:10:51.536508 version@stat F·[1] S·590B[590B] Sc·[0.25]
+00:10:51.536508 db@open opening
+00:10:51.536508 journal@recovery F·1
+00:10:51.537065 journal@recovery recovering @5
+00:10:51.538091 version@stat F·[1] S·590B[590B] Sc·[0.25]
+00:10:51.545485 db@janitor F·3 G·0
+00:10:51.545485 db@open done T·8.9766ms
+=============== Sep 29, 2023 (-03) ===============
+00:14:22.511580 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+00:14:22.531498 version@stat F·[1] S·590B[590B] Sc·[0.25]
+00:14:22.531498 db@open opening
+00:14:22.531498 journal@recovery F·1
+00:14:22.532010 journal@recovery recovering @7
+00:14:22.532522 version@stat F·[1] S·590B[590B] Sc·[0.25]
+00:14:22.539873 db@janitor F·3 G·0
+00:14:22.539873 db@open done T·8.3749ms
+=============== Sep 29, 2023 (-03) ===============
+00:16:18.729733 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+00:16:18.749673 version@stat F·[1] S·590B[590B] Sc·[0.25]
+00:16:18.749673 db@open opening
+00:16:18.749673 journal@recovery F·1
+00:16:18.750184 journal@recovery recovering @9
+00:16:18.753263 memdb@flush created L0@11 N·1 S·526B "2,v4":"2,v4"
+00:16:18.753775 version@stat F·[2] S·1KiB[1KiB] Sc·[0.50]
+00:16:18.762240 db@janitor F·4 G·0
+00:16:18.762240 db@open done T·12.5669ms
+00:16:33.701430 db@close closing
+00:16:33.701944 db@close done T·514.6µs
+=============== Sep 29, 2023 (-03) ===============
+00:16:37.192941 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+00:16:37.212326 version@stat F·[2] S·1KiB[1KiB] Sc·[0.50]
+00:16:37.212326 db@open opening
+00:16:37.212326 journal@recovery F·1
+00:16:37.212841 journal@recovery recovering @12
+00:16:37.213354 version@stat F·[2] S·1KiB[1KiB] Sc·[0.50]
+00:16:37.220676 db@janitor F·4 G·0
+00:16:37.220676 db@open done T·8.3501ms
