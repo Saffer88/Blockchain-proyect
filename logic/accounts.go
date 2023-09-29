@@ -35,7 +35,6 @@ func CreateAccount() {
 	} else {
 		address := crypto.PubkeyToAddress(privateKey.PublicKey)
 
-		// Toma tanto la parte X como la parte Y de la clave pública
 		publicKeyHex := fmt.Sprintf("%x%x", privateKey.PublicKey.X, privateKey.PublicKey.Y)
 		addressHex := fmt.Sprintf("%x", address)
 

@@ -51,11 +51,23 @@ func Limit(db *leveldb.DB) bool {
 	return true
 }
 
+// Cuenta genesis
+// Private Key: 5389340a76f6ac7f16dd3accf1ba2fd8cc505451be96601955cf234d4f0915d3
+// Public Key: 7d6866b740b19acdef6055398dfb2ace996153099471f12f6f1ff19d7856157ddf49cd8bca60f22467dbac63df248e06adbde6246d0c77385b3dd592e3ae31a1
+// Address: 0e1dd7f2e5cb568ee13534424aaa978e484df040
+
 func Genesis() Block {
 	var block Block
 	block.Index = 1
 	block.Timestamp = time.Now().Unix()
-	block.Transactions = nil
+	block.Transactions = []Transaction{
+		{
+			Sender:    "",
+			Receiver:  "0e1dd7f2e5cb568ee13534424aaa978e484df040",
+			Amount:    1000000,
+			Signature: "",
+		},
+	}
 	block.PrevHash = "1231231231231231231231231231231231231231231231231231231231231231"
 	block.Nonce = 1
 	block.Limit = 0

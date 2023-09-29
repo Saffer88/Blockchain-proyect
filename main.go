@@ -17,8 +17,7 @@ func main() {
 	}
 	defer db.Close()
 	logic.CreateGenesis(db) // Evaluamos si es necesario crear el bloque genesis
-
-	for { // despliegue de las opciones
+	for {                   // despliegue de las opciones
 		{
 			fmt.Print("\033[H\033[2J")
 			fmt.Println(`
@@ -27,12 +26,13 @@ func main() {
             2. Consultar el saldo de una cuenta.
             3. Escribir una transacción.
             4. Verificar la firma de una transacción.
-            5. Búsqueda de bloque específico usando ID.
-            6. Búsqueda de bloque usando transacción.
-            7. DEBUG Crear un bloque vacío (Limit 3 Default).
-            8. DEBUG Consultar los bloques totales.
-            9. DEBUG Ver todas las cuentas existentes.
-            10. DEBUG Volcar todos los bloques.
+            5. Ver todas las transacciones de una dirección.
+            6. Búsqueda de bloque específico usando ID.
+            7. Búsqueda de bloque usando transacción.
+            8. DEBUG Crear un bloque vacío (Limit 3 Default).
+            9. DEBUG Consultar los bloques totales.
+            10. DEBUG Ver todas las cuentas existentes.
+            11. DEBUG Volcar todos los bloques.
             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             `)
 			fmt.Print("\nOpción: ")
@@ -49,13 +49,28 @@ func main() {
 				  ~~~~~~~~~~~~~~~~~~~~~~
                 `)
 
-				logic.CreateAccount()
+				logic.CreateAccount() // Creamos cuenta
 
 				fmt.Print("\n\nPress Enter... ")
 				var wait int
 				fmt.Scanln(&wait)
 			case "2":
+				fmt.Print("\033[H\033[2J")
+				fmt.Println(`
+				~~~~ Consultar el saldo de una cuenta ~~~~~
+				         ~~~~~~~~~~~~~~~~~~~~~~
+                `)
+				fmt.Print("\ningrese la dirección: ")
+				var address string
+				fmt.Scanln(&address)
 
+				balance := logic.CalculateBalance(address, db)
+
+				fmt.Printf("\nEl saldo de la dirección %s es: %.5f\n", address, balance)
+
+				fmt.Print("\n\nPress Enter... ")
+				var wait int
+				fmt.Scanln(&wait)
 			case "3":
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
@@ -63,20 +78,27 @@ func main() {
 				     ~~~~~~~~~~~~~~~~~~~~~~
                 `)
 
-				fmt.Print("\ningrese su dirección: ")
+				fmt.Print("\ningrese la dirección: ")
 				var address string
 				fmt.Scanln(&address)
 				fmt.Print("\ningrese la dirección del destinatario: ")
 				var receiver string
 				fmt.Scanln(&receiver)
 				fmt.Print("\ningrese el monto: ")
-				var mount float64
-				fmt.Scanln(&mount)
+				var amount float64
+				fmt.Scanln(&amount)
 				fmt.Print("\ningrese su llave privada: ")
 				var priv string
 				fmt.Scanln(&priv)
 
-				newTransaction, err := logic.NewTransaction(address, receiver, mount, priv)
+				newTransaction, err := logic.NewTransaction(address, receiver, amount, priv, db)
+
+				if newTransaction == nil {
+					fmt.Print("\n\nPress Enter... ")
+					var wait int
+					fmt.Scanln(&wait)
+					break
+				}
 
 				blockIsFull := logic.Limit(db)
 
@@ -148,25 +170,28 @@ func main() {
 				fmt.Print("\ningrese la firma: ")
 				var signature string
 				fmt.Scanln(&signature)
-				fmt.Print("\ningrese su llave pública: ")
+				fmt.Print("\ningrese la llave pública: ")
 				var pub string
 				fmt.Scanln(&pub)
 
-				verify := logic.VerifyTransaction(address, receiver, mount, signature, pub)
-				if verify {
-					fmt.Print("\nLa firma es válida ")
-					fmt.Print("\n\nPress Enter... ")
-					var wait int
-					fmt.Scanln(&wait)
-				} else {
-
-					fmt.Print("\nLa firma no es válida ")
-					fmt.Print("\n\nPress Enter... ")
-					var wait int
-					fmt.Scanln(&wait)
-				}
-
-			case "5":
+				logic.VerifyTransaction(address, receiver, mount, signature, pub)
+				fmt.Print("\n\nPress Enter... ")
+				var wait int
+				fmt.Scanln(&wait)
+			case "5": // deglosar todas las transacciones de una cuenta
+				fmt.Print("\033[H\033[2J")
+				fmt.Println(`
+                 ~~~~ Obtener todas las transacciones de una cuenta ~~~~
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+				`)
+				fmt.Print("\nIngrese la dirección: ")
+				var address string
+				fmt.Scanln(&address)
+				logic.DisplayTransactions(address, db)
+				fmt.Print("\n\nPress Enter... ")
+				var wait int
+				fmt.Scanln(&wait)
+			case "6":
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
 				~~~~ Leer un Bloque ~~~~
@@ -191,9 +216,9 @@ func main() {
 					fmt.Scanln(&wait)
 				}
 
-			case "6":
-
 			case "7":
+
+			case "8":
 
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
@@ -210,13 +235,12 @@ func main() {
 					panic(err)
 				}
 
-				time.Sleep(1 * time.Second)
 				fmt.Println("\n\nRegistro completado.")
 				fmt.Print("\n\nPress Enter... ")
 				var wait int
 				fmt.Scanln(&wait)
 
-			case "8":
+			case "9":
 
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
@@ -236,7 +260,7 @@ func main() {
 				var wait int
 				fmt.Scanln(&wait)
 
-			case "9":
+			case "10":
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
 				~~~~ Consultar cuentas totales ~~~~~
@@ -248,7 +272,7 @@ func main() {
 				var wait int
 				fmt.Scanln(&wait)
 
-			case "10":
+			case "11":
 
 			default:
 				fmt.Println("Opción no válida. Intente de nuevo.")

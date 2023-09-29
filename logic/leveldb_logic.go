@@ -101,4 +101,5 @@ func CreateGenesis(db *leveldb.DB) {
 		var wait int
 		fmt.Scanln(&wait)
 	}
+
 }
