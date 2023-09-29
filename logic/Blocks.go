@@ -58,7 +58,7 @@ func Limit(db *leveldb.DB) bool {
 
 func Genesis() Block {
 	var block Block
-	block.Index = 0
+	block.Index = 1
 	block.Timestamp = time.Now().Unix()
 	block.Transactions = []Transaction{
 		{

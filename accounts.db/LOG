@@ -1,8 +1,32 @@
-=============== Sep 29, 2023 (-03) ===============
-16:05:09.023137 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
-16:05:09.028769 db@open opening
-16:05:09.029309 version@stat F·[] S·0B[] Sc·[]
-16:05:09.030815 db@janitor F·2 G·0
-16:05:09.030815 db@open done T·2.0463ms
-16:05:09.030815 db@close closing
-16:05:09.030815 db@close done T·0s
+=============== Sep 29, 2023 (-04) ===============
+18:11:51.166494 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+18:11:51.214252 db@open opening
+18:11:51.215392 version@stat F·[] S·0B[] Sc·[]
+18:11:51.230955 db@janitor F·2 G·0
+18:11:51.230955 db@open done T·16.7026ms
+18:11:51.230955 db@close closing
+18:11:51.230955 db@close done T·0s
+=============== Sep 29, 2023 (-04) ===============
+18:26:27.668898 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+18:26:27.669413 version@stat F·[] S·0B[] Sc·[]
+18:26:27.669413 db@open opening
+18:26:27.669413 journal@recovery F·1
+18:26:27.669413 journal@recovery recovering @1
+18:26:27.716357 memdb@flush created L0@2 N·1 S·317B "907..2ea,v1":"907..2ea,v1"
+18:26:27.717383 version@stat F·[1] S·317B[317B] Sc·[0.25]
+18:26:27.786423 db@janitor F·3 G·0
+18:26:27.786939 db@open done T·117.5262ms
+18:26:27.786939 db@close closing
+18:26:27.786939 db@close done T·0s
+=============== Sep 29, 2023 (-04) ===============
+18:27:50.492803 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+18:27:50.492803 version@stat F·[1] S·317B[317B] Sc·[0.25]
+18:27:50.492803 db@open opening
+18:27:50.493316 journal@recovery F·1
+18:27:50.495359 journal@recovery recovering @3
+18:27:50.520597 memdb@flush created L0@5 N·1 S·322B "b66..fe5,v3":"b66..fe5,v3"
+18:27:50.520597 version@stat F·[2] S·639B[639B] Sc·[0.50]
+18:27:50.598180 db@janitor F·4 G·0
+18:27:50.598180 db@open done T·105.3764ms
+18:27:50.598692 db@close closing
+18:27:50.598706 db@close done T·13.9µs
