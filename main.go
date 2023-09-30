@@ -6,37 +6,9 @@ import (
 	"fmt"
 	//"log"
 	"time"
-	"log"
-	"syscall"
-	"golang.org/x/crypto/ssh/terminal"
+
 	"github.com/syndtr/goleveldb/leveldb"
 )
-
-// Para pedir input de la llave privada en oculto por la consola
-func hide_private_key() string{
-	fmt.Print("Ingrese la llave privada del sender: ")
-
-	// Usa la función ReadPassword del paquete terminal para leer la contraseña de forma segura.
-	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Convierte la contraseña de bytes a un string.
-	password := string(bytePassword)
-
-	return password
-}
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -124,7 +96,7 @@ func main() {
 				var amount float64
 				fmt.Scanln(&amount)
 	
-				var priv string = hide_private_key()
+				var priv string = logic.Hide_private_key()
 
 				newTransaction, err := logic.NewTransaction(address, receiver, amount, priv, db)
 

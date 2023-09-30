@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-
+	"log"
+	"syscall"
+	"golang.org/x/crypto/ssh/terminal"
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
@@ -102,4 +104,20 @@ func CreateGenesis(db *leveldb.DB) {
 		fmt.Scanln(&wait)
 	}
 
+}
+
+// Para pedir input de la llave privada en oculto por la consola
+func Hide_private_key() string{
+	fmt.Print("Ingrese la llave privada del sender: ")
+
+	// Usa la función ReadPassword del paquete terminal para leer la contraseña de forma segura.
+	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Convierte la contraseña de bytes a un string.
+	password := string(bytePassword)
+
+	return password
 }
