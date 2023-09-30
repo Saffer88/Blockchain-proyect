@@ -6,9 +6,39 @@ import (
 	"fmt"
 	//"log"
 	"time"
-
+	"log"
+	"syscall"
+	"golang.org/x/crypto/ssh/terminal"
 	"github.com/syndtr/goleveldb/leveldb"
 )
+
+// Para pedir input de la llave privada en oculto por la consola
+func hide_private_key() string{
+	fmt.Print("Ingrese la llave privada del sender: ")
+
+	// Usa la función ReadPassword del paquete terminal para leer la contraseña de forma segura.
+	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Convierte la contraseña de bytes a un string.
+	password := string(bytePassword)
+
+	return password
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 func main() {
 	db, err := leveldb.OpenFile("./level.db", nil)
@@ -54,7 +84,9 @@ func main() {
 				fmt.Print("\n\nPress Enter... ")
 				var wait int
 				fmt.Scanln(&wait)
+
 			case "2":
+				
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
 				~~~~ Consultar el saldo de una cuenta ~~~~~
@@ -71,25 +103,28 @@ func main() {
 				fmt.Print("\n\nPress Enter... ")
 				var wait int
 				fmt.Scanln(&wait)
+
 			case "3":
+
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
 				~~~~ Escribir una transacción ~~~~~
 				     ~~~~~~~~~~~~~~~~~~~~~~
                 `)
 
-				fmt.Print("\ningrese la dirección: ")
+				fmt.Print("\ningrese la dirección del sender: ")
 				var address string
 				fmt.Scanln(&address)
+				
 				fmt.Print("\ningrese la dirección del destinatario: ")
 				var receiver string
 				fmt.Scanln(&receiver)
+				
 				fmt.Print("\ningrese el monto: ")
 				var amount float64
 				fmt.Scanln(&amount)
-				fmt.Print("\ningrese su llave privada: ")
-				var priv string
-				fmt.Scanln(&priv)
+	
+				var priv string = hide_private_key()
 
 				newTransaction, err := logic.NewTransaction(address, receiver, amount, priv, db)
 
@@ -158,7 +193,7 @@ func main() {
 				    ~~~~~~~~~~~~~~~
                 `)
 
-				fmt.Print("\ningrese su dirección: ")
+				fmt.Print("\ningrese dirección del sender: ")
 				var address string
 				fmt.Scanln(&address)
 				fmt.Print("\ningrese la dirección del destinatario: ")
@@ -170,7 +205,7 @@ func main() {
 				fmt.Print("\ningrese la firma: ")
 				var signature string
 				fmt.Scanln(&signature)
-				fmt.Print("\ningrese la llave pública: ")
+				fmt.Print("\ningrese la llave pública del sender: ")
 				var pub string
 				fmt.Scanln(&pub)
 
@@ -178,6 +213,7 @@ func main() {
 				fmt.Print("\n\nPress Enter... ")
 				var wait int
 				fmt.Scanln(&wait)
+
 			case "5": // deglosar todas las transacciones de una cuenta
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
