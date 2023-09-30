@@ -10,6 +10,8 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
+
+
 func main() {
 	db, err := leveldb.OpenFile("./level.db", nil)
 	if err != nil {
@@ -54,7 +56,9 @@ func main() {
 				fmt.Print("\n\nPress Enter... ")
 				var wait int
 				fmt.Scanln(&wait)
+
 			case "2":
+				
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
 				~~~~ Consultar el saldo de una cuenta ~~~~~
@@ -71,25 +75,28 @@ func main() {
 				fmt.Print("\n\nPress Enter... ")
 				var wait int
 				fmt.Scanln(&wait)
+
 			case "3":
+
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
 				~~~~ Escribir una transacción ~~~~~
 				     ~~~~~~~~~~~~~~~~~~~~~~
                 `)
 
-				fmt.Print("\ningrese la dirección: ")
+				fmt.Print("\ningrese la dirección del sender: ")
 				var address string
 				fmt.Scanln(&address)
+				
 				fmt.Print("\ningrese la dirección del destinatario: ")
 				var receiver string
 				fmt.Scanln(&receiver)
+				
 				fmt.Print("\ningrese el monto: ")
 				var amount float64
 				fmt.Scanln(&amount)
-				fmt.Print("\ningrese su llave privada: ")
-				var priv string
-				fmt.Scanln(&priv)
+	
+				var priv string = logic.Hide_private_key()
 
 				newTransaction, err := logic.NewTransaction(address, receiver, amount, priv, db)
 
@@ -158,7 +165,7 @@ func main() {
 				    ~~~~~~~~~~~~~~~
                 `)
 
-				fmt.Print("\ningrese su dirección: ")
+				fmt.Print("\ningrese dirección del sender: ")
 				var address string
 				fmt.Scanln(&address)
 				fmt.Print("\ningrese la dirección del destinatario: ")
@@ -170,7 +177,7 @@ func main() {
 				fmt.Print("\ningrese la firma: ")
 				var signature string
 				fmt.Scanln(&signature)
-				fmt.Print("\ningrese la llave pública: ")
+				fmt.Print("\ningrese la llave pública del sender: ")
 				var pub string
 				fmt.Scanln(&pub)
 
@@ -178,6 +185,7 @@ func main() {
 				fmt.Print("\n\nPress Enter... ")
 				var wait int
 				fmt.Scanln(&wait)
+
 			case "5": // deglosar todas las transacciones de una cuenta
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`

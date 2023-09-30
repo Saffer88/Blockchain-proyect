@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-
+	
+	"syscall"
+	"golang.org/x/crypto/ssh/terminal"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/tyler-smith/go-bip39"
@@ -105,4 +107,21 @@ func ShowAllAccounts() error {
 	}
 
 	return nil
+}
+
+
+// Para pedir input de la llave privada en oculto por la consola
+func Hide_private_key() string{
+	fmt.Print("Ingrese la llave privada del sender: ")
+
+	// Usa la función ReadPassword del paquete terminal para leer la contraseña de forma segura.
+	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Convierte la contraseña de bytes a un string.
+	password := string(bytePassword)
+
+	return password
 }
