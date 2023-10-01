@@ -10,9 +10,9 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
-
-
 func main() {
+	logic.Def_handler()
+
 	db, err := leveldb.OpenFile("./level.db", nil)
 	if err != nil {
 		panic(err)
@@ -58,7 +58,7 @@ func main() {
 				fmt.Scanln(&wait)
 
 			case "2":
-				
+
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
 				~~~~ Consultar el saldo de una cuenta ~~~~~
@@ -87,15 +87,15 @@ func main() {
 				fmt.Print("\ningrese la dirección del sender: ")
 				var address string
 				fmt.Scanln(&address)
-				
+
 				fmt.Print("\ningrese la dirección del destinatario: ")
 				var receiver string
 				fmt.Scanln(&receiver)
-				
+
 				fmt.Print("\ningrese el monto: ")
 				var amount float64
 				fmt.Scanln(&amount)
-	
+
 				var priv string = logic.Hide_private_key()
 
 				newTransaction, err := logic.NewTransaction(address, receiver, amount, priv, db)
@@ -164,24 +164,33 @@ func main() {
 				~~~~ Verificar firma ~~~~
 				    ~~~~~~~~~~~~~~~
                 `)
-
+				// solicitación de variables
 				fmt.Print("\ningrese dirección del sender: ")
 				var address string
 				fmt.Scanln(&address)
+
+				pub, err := logic.GetPublicKeyForUser(address)
+				if err != nil {
+					fmt.Println("Error:", err)
+
+				}
+
+				fmt.Println("Clave Pública:", pub)
+
 				fmt.Print("\ningrese la dirección del destinatario: ")
 				var receiver string
 				fmt.Scanln(&receiver)
+
 				fmt.Print("\ningrese el monto: ")
 				var mount float64
 				fmt.Scanln(&mount)
+
 				fmt.Print("\ningrese la firma: ")
 				var signature string
 				fmt.Scanln(&signature)
-				fmt.Print("\ningrese la llave pública del sender: ")
-				var pub string
-				fmt.Scanln(&pub)
 
 				logic.VerifyTransaction(address, receiver, mount, signature, pub)
+
 				fmt.Print("\n\nPress Enter... ")
 				var wait int
 				fmt.Scanln(&wait)
