@@ -91,6 +91,10 @@ func CreateGenesis(db *leveldb.DB) {
 	defer iter.Release()
 	if !iter.First() {
 		fmt.Print("\nCreando bloque Genesis.\n\n")
+		genesisAccount := GenesisAccount()
+		if genesisAccount != nil {
+			panic(genesisAccount)
+		}
 		genesis := Genesis()
 		err := SaveBlockToDB(genesis, db)
 		if err != nil {

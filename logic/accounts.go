@@ -78,6 +78,31 @@ func SaveAccountToDB(address, publicKey string) error {
 	return nil
 }
 
+func GenesisAccount() error {
+	account := Account{
+		Address:   "0e1dd7f2e5cb568ee13534424aaa978e484df040",
+		PublicKey: "7d6866b740b19acdef6055398dfb2ace996153099471f12f6f1ff19d7856157ddf49cd8bca60f22467dbac63df248e06adbde6246d0c77385b3dd592e3ae31a1",
+	}
+
+	accountData, err := json.Marshal(account)
+	if err != nil {
+		return fmt.Errorf("Error al pasar a json: %v", err)
+	}
+
+	db, err := leveldb.OpenFile("./accounts.db", nil)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	err = db.Put([]byte(account.Address), accountData, nil)
+	if err != nil {
+		return fmt.Errorf("No se pudo almacenar la cuenta genesis en la base de datos: %v", err)
+	}
+
+	return nil
+}
+
 func ShowAllAccounts() error {
 
 	db, err := leveldb.OpenFile("./accounts.db", nil)
@@ -112,7 +137,7 @@ func ShowAllAccounts() error {
 
 // Para pedir input de la llave privada en oculto por la consola
 func Hide_private_key() string {
-	fmt.Print("Ingrese la llave privada del sender: ")
+	fmt.Print("\nIngrese la llave privada del sender: ")
 
 	// Usa la función ReadPassword del paquete terminal para leer la contraseña de forma segura.
 	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))

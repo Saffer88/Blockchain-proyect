@@ -170,8 +170,11 @@ func main() {
 
 				pub, err := logic.GetPublicKeyForUser(address)
 				if err != nil {
-					fmt.Println("Error:", err)
-					return
+					fmt.Println("\nLa cuenta no existe: ")
+					fmt.Print("\n\nPress Enter... ")
+					var wait int
+					fmt.Scanln(&wait)
+					break
 				}
 
 				fmt.Print("\ningrese la dirección del destinatario: ")
@@ -192,7 +195,7 @@ func main() {
 				var wait int
 				fmt.Scanln(&wait)
 
-			case "5": // deglosar todas las transacciones de una cuenta
+			case "5":
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
                  ~~~~ Obtener todas las transacciones de una cuenta ~~~~
