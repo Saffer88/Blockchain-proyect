@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
@@ -100,7 +101,4 @@ func CreateGenesis(db *leveldb.DB) {
 		var wait int
 		fmt.Scanln(&wait)
 	}
-
 }
-
-

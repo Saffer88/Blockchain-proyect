@@ -552,3 +552,20 @@
 01:02:14.515082 version@stat F·[3 1] S·2KiB[1KiB 1KiB] Sc·[0.75 0.00]
 01:02:14.584695 db@janitor F·6 G·0
 01:02:14.585211 db@open done T·70.1209ms
+=============== Oct 1, 2023 (-04) ===============
+01:11:12.118668 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+01:11:12.119177 version@stat F·[3 1] S·2KiB[1KiB 1KiB] Sc·[0.75 0.00]
+01:11:12.119177 db@open opening
+01:11:12.119177 journal@recovery F·1
+01:11:12.119686 journal@recovery recovering @122
+01:11:12.143156 memdb@flush created L0@124 N·3 S·1KiB "2,v17":"3,v18"
+01:11:12.143156 version@stat F·[4 1] S·4KiB[3KiB 1KiB] Sc·[1.00 0.00]
+01:11:12.209269 db@janitor F·7 G·0
+01:11:12.209279 db@open done T·90.1025ms
+01:11:12.209279 table@compaction L0·4 -> L1·0 S·3KiB Q·20
+01:11:12.232130 table@build created L1@127 N·2 S·1KiB "2,v17":"3,v19"
+01:11:12.232130 version@stat F·[0 2] S·2KiB[0B 2KiB] Sc·[0.00 0.00]
+01:11:12.257176 table@compaction committed F-3 S-1KiB Ke·0 D·4 T·47.8972ms
+01:11:12.257176 table@remove removed @83
+01:11:12.257701 table@remove removed @42
+01:11:12.257701 table@remove removed @37
