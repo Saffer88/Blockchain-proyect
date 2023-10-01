@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	
+
 	"syscall"
-	"golang.org/x/crypto/ssh/terminal"
+
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/tyler-smith/go-bip39"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 type Account struct {
@@ -109,9 +110,8 @@ func ShowAllAccounts() error {
 	return nil
 }
 
-
 // Para pedir input de la llave privada en oculto por la consola
-func Hide_private_key() string{
+func Hide_private_key() string {
 	fmt.Print("Ingrese la llave privada del sender: ")
 
 	// Usa la función ReadPassword del paquete terminal para leer la contraseña de forma segura.
@@ -124,4 +124,25 @@ func Hide_private_key() string{
 	password := string(bytePassword)
 
 	return password
+}
+
+func GetPublicKeyForUser(address string) (string, error) {
+	db, err := leveldb.OpenFile("./accounts.db", nil)
+	if err != nil {
+		return "error abriendo db", err
+	}
+	defer db.Close()
+
+	accountData, err := db.Get([]byte(address), nil)
+	if err != nil {
+		return "error geteando la cuenta", err
+	}
+
+	var account Account
+	err = json.Unmarshal(accountData, &account)
+	if err != nil {
+		return "error json-codeando", err
+	}
+
+	return account.PublicKey, nil
 }
