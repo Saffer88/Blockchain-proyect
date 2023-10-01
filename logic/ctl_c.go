@@ -15,7 +15,7 @@ func Def_handler() {
 
 	go func() {
 		sig := <-sigchan
-		fmt.Printf("\n\n[!] Saliendo del pograma: %v\n", sig)
+		fmt.Printf("\n\n[!] Saliendo del programa: %v\n", sig)
 		os.Exit(1)
 	}()
 }

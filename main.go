@@ -164,7 +164,6 @@ func main() {
 				~~~~ Verificar firma ~~~~
 				    ~~~~~~~~~~~~~~~
                 `)
-				// solicitación de variables
 				fmt.Print("\ningrese dirección del sender: ")
 				var address string
 				fmt.Scanln(&address)
@@ -172,10 +171,8 @@ func main() {
 				pub, err := logic.GetPublicKeyForUser(address)
 				if err != nil {
 					fmt.Println("Error:", err)
-
+					return
 				}
-
-				fmt.Println("Clave Pública:", pub)
 
 				fmt.Print("\ningrese la dirección del destinatario: ")
 				var receiver string

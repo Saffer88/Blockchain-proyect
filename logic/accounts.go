@@ -127,26 +127,22 @@ func Hide_private_key() string {
 }
 
 func GetPublicKeyForUser(address string) (string, error) {
-	// Abre la base de datos de cuentas
 	db, err := leveldb.OpenFile("./accounts.db", nil)
 	if err != nil {
-		return "no se abrio correctamente la db", err
+		return "error abriendo db", err
 	}
 	defer db.Close()
 
-	// Busca el usuario por su dirección
-	data, err := db.Get([]byte(address), nil)
+	accountData, err := db.Get([]byte(address), nil)
 	if err != nil {
-		return "wateo en el get", err
+		return "error geteando la cuenta", err
 	}
 
-	// Decodifica los datos en una estructura de cuenta
 	var account Account
-	err = json.Unmarshal(data, &account)
+	err = json.Unmarshal(accountData, &account)
 	if err != nil {
-		return "pasar a json falló", err
+		return "error json-codeando", err
 	}
 
-	// Devuelve la clave pública del usuario
 	return account.PublicKey, nil
 }
