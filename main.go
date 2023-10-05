@@ -13,7 +13,7 @@ import (
 func main() {
 	logic.Def_handler()
 
-	db, err := leveldb.OpenFile("./level.db", nil)
+	db, err := leveldb.OpenFile("./blocks.db", nil)
 	if err != nil {
 		panic(err)
 	}
@@ -30,11 +30,9 @@ func main() {
             4. Verificar la firma de una transacción.
             5. Ver todas las transacciones de una dirección.
             6. Búsqueda de bloque específico usando ID.
-            7. Búsqueda de bloque usando transacción.
-            8. DEBUG Crear un bloque vacío (Limit 3 Default).
-            9. DEBUG Consultar los bloques totales.
-            10. DEBUG Ver todas las cuentas existentes.
-            11. DEBUG Volcar todos los bloques.
+            7. DEBUG Crear un bloque vacío (Limit 3 Default).
+            8. DEBUG Consultar los bloques totales.
+            9. DEBUG Ver todas las cuentas existentes.
             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             `)
 			fmt.Print("\nOpción: ")
@@ -52,10 +50,7 @@ func main() {
                 `)
 
 				logic.CreateAccount() // Creamos cuenta
-
-				fmt.Print("\n\nPress Enter... ")
-				var wait int
-				fmt.Scanln(&wait)
+				logic.PressEnter()
 
 			case "2":
 
@@ -68,13 +63,17 @@ func main() {
 				var address string
 				fmt.Scanln(&address)
 
-				balance := logic.CalculateBalance(address, db)
+				balance, err := logic.GetBalance(address)
+
+				if err != nil {
+					fmt.Print("\nError al obtener el balance")
+					logic.PressEnter()
+					break
+				}
 
 				fmt.Printf("\nEl saldo de la dirección %s es: %.5f\n", address, balance)
 
-				fmt.Print("\n\nPress Enter... ")
-				var wait int
-				fmt.Scanln(&wait)
+				logic.PressEnter()
 
 			case "3":
 
@@ -96,14 +95,16 @@ func main() {
 				var amount float64
 				fmt.Scanln(&amount)
 
-				var priv string = logic.Hide_private_key()
+				var priv string = logic.HidePrivateKey()
 
-				newTransaction, err := logic.NewTransaction(address, receiver, amount, priv, db)
+				fmt.Print("\n\ningrese el Nonce: ")
+				var nonce int
+				fmt.Scanln(&nonce)
+
+				newTransaction, err := logic.NewTransaction(address, receiver, amount, priv, db, nonce)
 
 				if newTransaction == nil {
-					fmt.Print("\n\nPress Enter... ")
-					var wait int
-					fmt.Scanln(&wait)
+					logic.PressEnter()
 					break
 				}
 
@@ -122,12 +123,18 @@ func main() {
 					if err != nil {
 						panic(err)
 					}
+					err = logic.UpdateBalance(address, -amount)
+					if err != nil {
+						panic(err)
+					}
+					err = logic.UpdateBalance(receiver, amount)
+					if err != nil {
+						panic(err)
+					}
 					fmt.Println("\nSe ha creado el bloque correctamente")
 					logic.Pretty(newblock)
 
-					fmt.Print("\n\nPress Enter... ")
-					var wait int
-					fmt.Scanln(&wait)
+					logic.PressEnter()
 
 				} else {
 					lastBlock, err := logic.GetLastBlock(db)
@@ -137,8 +144,16 @@ func main() {
 					}
 
 					logic.AddTransaction(&lastBlock, *newTransaction)
-
+					logic.UpdateBlockHash(&lastBlock) // actualizamos el hash con las nuevas transacciones
 					err = logic.SaveBlockToDB(lastBlock, db)
+					if err != nil {
+						panic(err)
+					}
+					err = logic.UpdateBalance(address, -amount)
+					if err != nil {
+						panic(err)
+					}
+					err = logic.UpdateBalance(receiver, amount)
 					if err != nil {
 						panic(err)
 					}
@@ -152,9 +167,7 @@ func main() {
 
 					logic.Pretty(searchblock)
 
-					fmt.Print("\n\nPress Enter... ")
-					var wait int
-					fmt.Scanln(&wait)
+					logic.PressEnter()
 
 				}
 			case "4":
@@ -171,9 +184,7 @@ func main() {
 				pub, err := logic.GetPublicKeyForUser(address)
 				if err != nil {
 					fmt.Println("\nLa cuenta no existe: ")
-					fmt.Print("\n\nPress Enter... ")
-					var wait int
-					fmt.Scanln(&wait)
+					logic.PressEnter()
 					break
 				}
 
@@ -191,9 +202,7 @@ func main() {
 
 				logic.VerifyTransaction(address, receiver, mount, signature, pub)
 
-				fmt.Print("\n\nPress Enter... ")
-				var wait int
-				fmt.Scanln(&wait)
+				logic.PressEnter()
 
 			case "5":
 				fmt.Print("\033[H\033[2J")
@@ -205,9 +214,9 @@ func main() {
 				var address string
 				fmt.Scanln(&address)
 				logic.DisplayTransactions(address, db)
-				fmt.Print("\n\nPress Enter... ")
-				var wait int
-				fmt.Scanln(&wait)
+
+				logic.PressEnter()
+
 			case "6":
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
@@ -221,21 +230,15 @@ func main() {
 				searchblock, err := logic.GetBlockFromDB(ID, db)
 				if err != nil {
 					fmt.Print("\nEl bloque no existe.")
-					fmt.Print("\n\nPress Enter... ")
-					var wait int
-					fmt.Scanln(&wait)
+					logic.PressEnter()
 				} else {
 					fmt.Print("\nEl bloque con el ID correspondiente es el siguiente:\n\n")
 					logic.Pretty(searchblock)
 
-					fmt.Print("\n\nPress Enter... ")
-					var wait int
-					fmt.Scanln(&wait)
+					logic.PressEnter()
 				}
 
 			case "7":
-
-			case "8":
 
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
@@ -253,11 +256,9 @@ func main() {
 				}
 
 				fmt.Println("\n\nRegistro completado.")
-				fmt.Print("\n\nPress Enter... ")
-				var wait int
-				fmt.Scanln(&wait)
+				logic.PressEnter()
 
-			case "9":
+			case "8":
 
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
@@ -273,11 +274,9 @@ func main() {
 
 				fmt.Printf("Cantidad total de bloques: %d\n", totalBlocks)
 
-				fmt.Print("\n\nPress Enter... ")
-				var wait int
-				fmt.Scanln(&wait)
+				logic.PressEnter()
 
-			case "10":
+			case "9":
 				fmt.Print("\033[H\033[2J")
 				fmt.Println(`
 				~~~~ Consultar cuentas totales ~~~~~
@@ -285,11 +284,7 @@ func main() {
                 `)
 				logic.ShowAllAccounts()
 
-				fmt.Print("\n\nPress Enter... ")
-				var wait int
-				fmt.Scanln(&wait)
-
-			case "11":
+				logic.PressEnter()
 
 			default:
 				fmt.Println("Opción no válida. Intente de nuevo.")

@@ -16,6 +16,7 @@ import (
 type Account struct {
 	Address   string
 	PublicKey string
+	Balance   float64
 }
 
 func CreateAccount() {
@@ -41,7 +42,7 @@ func CreateAccount() {
 		publicKeyHex := fmt.Sprintf("%x%x", privateKey.PublicKey.X, privateKey.PublicKey.Y)
 		addressHex := fmt.Sprintf("%x", address)
 
-		err := SaveAccountToDB(addressHex, publicKeyHex)
+		err := SaveAccountToDB(addressHex, publicKeyHex, 0)
 		if err != nil {
 			fmt.Println("Error al guardar la cuenta en la base de datos: ", err)
 		}
@@ -53,10 +54,11 @@ func CreateAccount() {
 	}
 }
 
-func SaveAccountToDB(address, publicKey string) error {
+func SaveAccountToDB(address, publicKey string, balance float64) error {
 	account := Account{
 		Address:   address,
 		PublicKey: publicKey,
+		Balance:   balance,
 	}
 
 	accountData, err := json.Marshal(account)
@@ -78,26 +80,50 @@ func SaveAccountToDB(address, publicKey string) error {
 	return nil
 }
 
-func GenesisAccount() error {
-	account := Account{
-		Address:   "0e1dd7f2e5cb568ee13534424aaa978e484df040",
-		PublicKey: "7d6866b740b19acdef6055398dfb2ace996153099471f12f6f1ff19d7856157ddf49cd8bca60f22467dbac63df248e06adbde6246d0c77385b3dd592e3ae31a1",
-	}
-
-	accountData, err := json.Marshal(account)
-	if err != nil {
-		return fmt.Errorf("Error al pasar a json: %v", err)
-	}
-
+func UpdateBalance(address string, newBalance float64) error {
 	db, err := leveldb.OpenFile("./accounts.db", nil)
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
-	err = db.Put([]byte(account.Address), accountData, nil)
+	data, err := db.Get([]byte(address), nil)
 	if err != nil {
-		return fmt.Errorf("No se pudo almacenar la cuenta genesis en la base de datos: %v", err)
+		return err
+	}
+
+	var account Account
+	err = json.Unmarshal(data, &account)
+	if err != nil {
+		return err
+	}
+
+	account.Balance += newBalance
+
+	updatedData, err := json.Marshal(account)
+	if err != nil {
+		return err
+	}
+
+	err = db.Put([]byte(address), updatedData, nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GenesisAccount() error {
+	account := Account{
+		Address:   "0e1dd7f2e5cb568ee13534424aaa978e484df040",
+		PublicKey: "7d6866b740b19acdef6055398dfb2ace996153099471f12f6f1ff19d7856157ddf49cd8bca60f22467dbac63df248e06adbde6246d0c77385b3dd592e3ae31a1",
+		Balance:   10000,
+	}
+
+	err := SaveAccountToDB(account.Address, account.PublicKey, account.Balance)
+
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -124,6 +150,7 @@ func ShowAllAccounts() error {
 
 		fmt.Printf("Address: %s\n", key)
 		fmt.Printf("Public Key: %s\n", account.PublicKey)
+		fmt.Printf("Public Key: %.5f\n", account.Balance)
 		fmt.Println("-------------------------")
 	}
 	iter.Release()
@@ -135,17 +162,14 @@ func ShowAllAccounts() error {
 	return nil
 }
 
-// Para pedir input de la llave privada en oculto por la consola
-func Hide_private_key() string {
+func HidePrivateKey() string {
 	fmt.Print("\nIngrese la llave privada del sender: ")
 
-	// Usa la función ReadPassword del paquete terminal para leer la contraseña de forma segura.
 	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Convierte la contraseña de bytes a un string.
 	password := string(bytePassword)
 
 	return password

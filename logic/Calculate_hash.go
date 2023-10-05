@@ -7,9 +7,9 @@ import (
 )
 
 func CalculateHash(block Block) string {
-	record := fmt.Sprintf("%d%d%s%d", block.Index, block.Timestamp, block.PrevHash, block.Nonce)
+	record := fmt.Sprintf("%d%d%s", block.Index, block.Timestamp, block.PrevHash)
 	for _, transaction := range block.Transactions {
-		record += fmt.Sprintf("%s%s%f", transaction.Sender, transaction.Receiver, transaction.Amount)
+		record += fmt.Sprintf("%s%s%f%d", transaction.Sender, transaction.Receiver, transaction.Amount, transaction.Nonce)
 	}
 	h := sha256.New()
 	h.Write([]byte(record))

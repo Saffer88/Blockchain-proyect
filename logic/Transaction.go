@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/syndtr/goleveldb/leveldb"
@@ -17,15 +16,16 @@ type Transaction struct {
 	Receiver  string
 	Amount    float64
 	Signature string
+	Nonce     int
 }
 
 func AddTransaction(block *Block, transaction Transaction) {
 	block.Transactions = append(block.Transactions, transaction)
 }
 
-func NewTransaction(sender string, receiver string, amount float64, privateKeyHex string, db *leveldb.DB) (*Transaction, error) {
+func NewTransaction(sender string, receiver string, amount float64, privateKeyHex string, db *leveldb.DB, nonce int) (*Transaction, error) {
 
-	verify := VerifyBalance(sender, amount, db)
+	verify := VerifyBalance(sender, amount)
 
 	if !verify {
 		fmt.Println("\nNo existe el saldo suficiente en la cuenta.")
@@ -55,6 +55,7 @@ func NewTransaction(sender string, receiver string, amount float64, privateKeyHe
 		Receiver:  receiver,
 		Amount:    amount,
 		Signature: hex.EncodeToString(sig),
+		Nonce:     nonce,
 	}
 
 	return tx, nil
@@ -100,40 +101,33 @@ func VerifyTransaction(sender string, receiver string, amount float64, signature
 	return isValidSig
 }
 
-func CalculateBalance(address string, db *leveldb.DB) float64 {
-	var balance float64
+func GetBalance(address string) (float64, error) {
 
-	iter := db.NewIterator(nil, nil)
-	for iter.Next() {
-
-		blockData := iter.Value()
-
-		var block Block
-		err := json.Unmarshal(blockData, &block)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		for _, tx := range block.Transactions {
-			if tx.Sender == address {
-				balance -= tx.Amount
-			}
-			if tx.Receiver == address {
-				balance += tx.Amount
-			}
-		}
-	}
-	iter.Release()
-	err := iter.Error()
+	db, err := leveldb.OpenFile("./accounts.db", nil)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
+	}
+	defer db.Close()
+	data, err := db.Get([]byte(address), nil)
+	if err != nil {
+		return 0, err
 	}
 
-	return balance
+	var account Account
+	err = json.Unmarshal(data, &account)
+	if err != nil {
+		return 0, err
+	}
+
+	return account.Balance, nil
 }
 
-func VerifyBalance(address string, amount float64, db *leveldb.DB) bool {
-	balance := CalculateBalance(address, db)
+func VerifyBalance(address string, amount float64) bool {
+	balance, err := GetBalance(address)
+
+	if err != nil {
+		return false
+	}
 
 	if balance >= amount {
 		return true

@@ -19,3 +19,9 @@ func Def_handler() {
 		os.Exit(1)
 	}()
 }
+
+func PressEnter() {
+	fmt.Print("\n\nPress Enter... ")
+	var wait int
+	fmt.Scanln(&wait)
+}
