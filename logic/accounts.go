@@ -218,7 +218,6 @@ func VerifyAccount(adress string) (bool, error) {
 		if string(key) == adress {
 			return true, nil
 		}
-		fmt.Println("-------------------------")
 	}
 	iter.Release()
 	err = iter.Error()
