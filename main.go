@@ -63,18 +63,21 @@ func main() {
 				var address string
 				fmt.Scanln(&address)
 
-				balance, err := logic.GetBalance(address)
-
-				if err != nil {
-					fmt.Print("\nError al obtener el balance")
+				result, _ := logic.VerifyAccount(address)
+				if !result {
+					fmt.Print("\nError: CUENTA NO EXISTE")
 					logic.PressEnter()
-					break
+				} else {
+					balance, err := logic.GetBalance(address)
+					if err != nil {
+						fmt.Print("\nError al obtener el balance")
+						logic.PressEnter()
+						break
+					}
+					fmt.Printf("\nEl saldo de la dirección %s es: %.5f\n", address, balance)
+					logic.PressEnter()
 				}
-
-				fmt.Printf("\nEl saldo de la dirección %s es: %.5f\n", address, balance)
-
-				logic.PressEnter()
-
+				
 			case "3":
 
 				fmt.Print("\033[H\033[2J")
