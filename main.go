@@ -100,6 +100,11 @@ func main() {
 						fmt.Print("\ningrese el monto: ")
 						var amount float64
 						fmt.Scanln(&amount)
+						if amount <= 0 {
+							fmt.Print("\nMonto invalido ")
+							logic.PressEnter()
+							break
+						}
 
 						var priv string = logic.HidePrivateKey()
 
