@@ -228,9 +228,15 @@ func main() {
 				fmt.Print("\nIngrese la dirección: ")
 				var address string
 				fmt.Scanln(&address)
-				logic.DisplayTransactions(address, db)
 
-				logic.PressEnter()
+				result, _ := logic.VerifyAccount(address)
+				if result {
+					logic.DisplayTransactions(address, db)
+					logic.PressEnter()
+				} else {
+					fmt.Print("\nCuenta no existe")
+					logic.PressEnter()
+				}
 
 			case "6":
 				fmt.Print("\033[H\033[2J")
