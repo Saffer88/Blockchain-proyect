@@ -2,9 +2,9 @@
 
 ## Integrantes: 
 
-- Mirko Babic -- mirko.babic@mail.udp.cl
-- Javier Romo -- javier.romo@mail.udp.cl/ul.jromoa@gmail.com
-- Nicolás 
+- Mirko Babic   -- mirko.babic@mail.udp.cl
+- Javier Romo   -- javier.romo@mail.udp.cl/ul.jromoa@gmail.com
+- Nicolás Soto  -- nicolas.soto1@mail.udp.cl/nicoandres94@gmail.com
 ---
 
 ## Demostración del funcionamiento 

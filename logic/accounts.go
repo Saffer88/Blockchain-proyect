@@ -195,3 +195,34 @@ func GetPublicKeyForUser(address string) (string, error) {
 
 	return account.PublicKey, nil
 }
+
+func VerifyAccount(adress string) (bool, error) {
+
+	db, err := leveldb.OpenFile("./accounts.db", nil)
+	if err != nil {
+		return false, err
+	}
+	defer db.Close()
+
+	iter := db.NewIterator(nil, nil)
+	for iter.Next() {
+		key := iter.Key()
+		value := iter.Value()
+
+		var account Account
+		err := json.Unmarshal(value, &account)
+		if err != nil {
+			return false, err
+		}
+
+		if string(key) == adress {
+			return true, nil
+		}
+	}
+	iter.Release()
+	err = iter.Error()
+	if err != nil {
+		return false, err
+	}
+	return false, nil
+}
