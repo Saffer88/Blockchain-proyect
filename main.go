@@ -285,22 +285,6 @@ func main() {
 				logic.ShowAllAccounts()
 
 				logic.PressEnter()
-				
-			case "10":
-				fmt.Print("\033[H\033[2J")
-				fmt.Println(`
-				~~~~ Consultar existencia de cuenta (adress) ~~~~~
-				    ~~~~~~~~~~~~~~~~~~~~~~~~~~
-                `)
-				fmt.Print("\nIngrese adress: ")
-				var adress string
-				fmt.Scanln(&adress)
-				result, _ := logic.VerifyAccount(adress)
-				if result {
-					fmt.Print("\nEXISTE")
-				} else {
-					fmt.Print("\nNO EXISTE")
-				}
 
 			default:
 				fmt.Println("Opción no válida. Intente de nuevo.")
