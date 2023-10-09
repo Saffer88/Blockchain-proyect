@@ -10,7 +10,7 @@
 
 - **Lenguaje:** Go
 - **DataBase:** LevelDB
-- **Sistema de Cuentas:** Mnemonic
+- **Sistema de Cuentas:** Mnemonic ethereum
 
 ## Instrucciones de uso
 
