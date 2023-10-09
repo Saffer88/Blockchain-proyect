@@ -65,19 +65,20 @@ func main() {
 
 				result, _ := logic.VerifyAccount(address)
 				if !result {
-					fmt.Print("\nError: CUENTA NO EXISTE")
+					fmt.Print("\nLa cuenta no existe")
 					logic.PressEnter()
-				} else {
-					balance, err := logic.GetBalance(address)
-					if err != nil {
-						fmt.Print("\nError al obtener el balance")
-						logic.PressEnter()
-						break
-					}
-					fmt.Printf("\nEl saldo de la dirección %s es: %.5f\n", address, balance)
-					logic.PressEnter()
+					break
 				}
-				
+
+				balance, err := logic.GetBalance(address)
+				if err != nil {
+					fmt.Print("\nError al obtener el balance")
+					logic.PressEnter()
+					break
+				}
+				fmt.Printf("\nEl saldo de la dirección %s es: %.5f\n", address, balance)
+				logic.PressEnter()
+
 			case "3":
 
 				fmt.Print("\033[H\033[2J")
@@ -86,108 +87,117 @@ func main() {
 				     ~~~~~~~~~~~~~~~~~~~~~~
                 `)
 
-				fmt.Print("\ningrese la dirección del sender: ")
+				fmt.Print("\ningrese la dirección: ")
 				var address string
 				fmt.Scanln(&address)
-				result1, _ := logic.VerifyAccount(address)
-				if result1 {
-					fmt.Print("\ningrese la dirección del destinatario: ")
-					var receiver string
-					fmt.Scanln(&receiver)
-
-					result2, _ := logic.VerifyAccount(receiver)
-					if result2 {
-						fmt.Print("\ningrese el monto: ")
-						var amount float64
-						fmt.Scanln(&amount)
-						if amount <= 0 {
-							fmt.Print("\nMonto invalido ")
-							logic.PressEnter()
-							break
-						}
-
-						var priv string = logic.HidePrivateKey()
-
-						fmt.Print("\n\ningrese el Nonce: ")
-						var nonce int
-						fmt.Scanln(&nonce)
-
-						newTransaction, err := logic.NewTransaction(address, receiver, amount, priv, db, nonce)
-
-						if newTransaction == nil {
-							logic.PressEnter()
-							break
-						}
-
-						blockIsFull := logic.Limit(db)
-
-						if blockIsFull {
-							fmt.Println("\nEl último bloque está lleno, así que se creará un nuevo bloque")
-
-							fmt.Print("\nIndique el límite de transacciones del bloque: ")
-							var limit int
-							fmt.Scanln(&limit)
-
-							transactions := []logic.Transaction{*newTransaction}
-							newblock := logic.GenerateBlock(db, transactions, limit)
-							err = logic.SaveBlockToDB(newblock, db)
-							if err != nil {
-								panic(err)
-							}
-							err = logic.UpdateBalance(address, -amount)
-							if err != nil {
-								panic(err)
-							}
-							err = logic.UpdateBalance(receiver, amount)
-							if err != nil {
-								panic(err)
-							}
-							fmt.Println("\nSe ha creado el bloque correctamente")
-							logic.Pretty(newblock)
-
-							logic.PressEnter()
-
-						} else {
-							lastBlock, err := logic.GetLastBlock(db)
-							if err != nil {
-								fmt.Println("\nError al obtener el último bloque", err)
-								panic(err)
-							}
-
-							logic.AddTransaction(&lastBlock, *newTransaction)
-							logic.UpdateBlockHash(&lastBlock) // actualizamos el hash con las nuevas transacciones
-							err = logic.SaveBlockToDB(lastBlock, db)
-							if err != nil {
-								panic(err)
-							}
-							err = logic.UpdateBalance(address, -amount)
-							if err != nil {
-								panic(err)
-							}
-							err = logic.UpdateBalance(receiver, amount)
-							if err != nil {
-								panic(err)
-							}
-
-							fmt.Println("\nSe ha escrito la información en el bloque:")
-
-							searchblock, err := logic.GetBlockFromDB(lastBlock.Index, db)
-							if err != nil {
-								panic(err)
-							}
-
-							logic.Pretty(searchblock)
-
-							logic.PressEnter()
-						}
-
-					} else {
-						fmt.Print("\nDestinatario no existe ")
-						logic.PressEnter()
-					}
-				} else {
-					fmt.Print("\nSender no existe ")
+				result, _ := logic.VerifyAccount(address)
+				if !result {
+					fmt.Print("\nLa cuenta address no existe.")
 					logic.PressEnter()
+					break
+				}
+				fmt.Print("\ningrese la dirección del destinatario: ")
+				var receiver string
+				fmt.Scanln(&receiver)
+				if receiver == address {
+					fmt.Print("\nLas cuentas no pueden ser iguales.")
+					logic.PressEnter()
+					break
+				}
+				result1, _ := logic.VerifyAccount(receiver)
+				if !result1 {
+					fmt.Print("\nLa cuenta destinatario no existe.")
+					logic.PressEnter()
+					break
+				}
+				fmt.Print("\ningrese el monto: ")
+				var amount float64
+				fmt.Scanln(&amount)
+				if amount <= 0 {
+					fmt.Print("\nMonto inválido ")
+					logic.PressEnter()
+					break
+				}
+				var priv string = logic.HidePrivateKey()
+				fmt.Print("\n\ningrese el nonce: ")
+				var nonce int
+				fmt.Scanln(&nonce)
+
+				isValid := logic.IsNonceValid(address, nonce, db)
+				if !isValid {
+					fmt.Println("\n\nEl nonce no es válido.")
+					logic.PressEnter()
+					break
+				}
+				newTransaction, err := logic.NewTransaction(address, receiver, amount, priv, db, nonce)
+
+				if newTransaction == nil {
+					fmt.Println("\n\nNo se ha podido completar la transacción")
+					logic.PressEnter()
+					break
+				}
+
+				blockIsFull := logic.Limit(db)
+
+				if blockIsFull {
+					fmt.Println("\nEl último bloque está lleno, así que se creará un nuevo bloque")
+
+					fmt.Print("\nIndique el límite de transacciones del bloque: ")
+					var limit int
+					fmt.Scanln(&limit)
+
+					transactions := []logic.Transaction{*newTransaction}
+					newblock := logic.GenerateBlock(db, transactions, limit)
+					err = logic.SaveBlockToDB(newblock, db)
+					if err != nil {
+						panic(err)
+					}
+					err = logic.UpdateBalance(address, -amount)
+					if err != nil {
+						panic(err)
+					}
+					err = logic.UpdateBalance(receiver, amount)
+					if err != nil {
+						panic(err)
+					}
+					fmt.Println("\nSe ha creado el bloque correctamente")
+					logic.Pretty(newblock)
+
+					logic.PressEnter()
+
+				} else {
+					lastBlock, err := logic.GetLastBlock(db)
+					if err != nil {
+						fmt.Println("\nError al obtener el último bloque", err)
+						panic(err)
+					}
+
+					logic.AddTransaction(&lastBlock, *newTransaction)
+					logic.UpdateBlockHash(&lastBlock) // actualizamos el hash con las nuevas transacciones
+					err = logic.SaveBlockToDB(lastBlock, db)
+					if err != nil {
+						panic(err)
+					}
+					err = logic.UpdateBalance(address, -amount)
+					if err != nil {
+						panic(err)
+					}
+					err = logic.UpdateBalance(receiver, amount)
+					if err != nil {
+						panic(err)
+					}
+
+					fmt.Println("\nSe ha escrito la información en el bloque:")
+
+					searchblock, err := logic.GetBlockFromDB(lastBlock.Index, db)
+					if err != nil {
+						panic(err)
+					}
+
+					logic.Pretty(searchblock)
+
+					logic.PressEnter()
+
 				}
 
 			case "4":
@@ -216,11 +226,15 @@ func main() {
 				var mount float64
 				fmt.Scanln(&mount)
 
+				fmt.Print("\ningrese el nonce: ")
+				var nonce int
+				fmt.Scanln(&nonce)
+
 				fmt.Print("\ningrese la firma: ")
 				var signature string
 				fmt.Scanln(&signature)
 
-				logic.VerifyTransaction(address, receiver, mount, signature, pub)
+				logic.VerifyTransaction(address, receiver, mount, nonce, signature, pub)
 
 				logic.PressEnter()
 

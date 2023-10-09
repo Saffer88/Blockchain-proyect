@@ -30,8 +30,6 @@ func CreateAccount() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Mnemonic: ", mnemonic)
-
 	seed := bip39.NewSeed(mnemonic, "")
 	privateKey, err := crypto.ToECDSA(seed[:32])
 	if err != nil {
@@ -117,7 +115,7 @@ func GenesisAccount() error {
 	account := Account{
 		Address:   "0e1dd7f2e5cb568ee13534424aaa978e484df040",
 		PublicKey: "7d6866b740b19acdef6055398dfb2ace996153099471f12f6f1ff19d7856157ddf49cd8bca60f22467dbac63df248e06adbde6246d0c77385b3dd592e3ae31a1",
-		Balance:   10000,
+		Balance:   1000000,
 	}
 
 	err := SaveAccountToDB(account.Address, account.PublicKey, account.Balance)

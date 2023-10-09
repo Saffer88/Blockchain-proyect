@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/syndtr/goleveldb/leveldb"
@@ -42,7 +43,7 @@ func NewTransaction(sender string, receiver string, amount float64, privateKeyHe
 		return nil, err
 	}
 
-	txData := fmt.Sprintf("%s%s%f", sender, receiver, amount)
+	txData := fmt.Sprintf("%s%s%f%d", sender, receiver, amount, nonce)
 	hash := sha256.Sum256([]byte(txData))
 
 	sig, err := crypto.Sign(hash[:], privateKey) // firma
@@ -61,9 +62,9 @@ func NewTransaction(sender string, receiver string, amount float64, privateKeyHe
 	return tx, nil
 }
 
-func VerifyTransaction(sender string, receiver string, amount float64, signature, publicKeyHex string) bool {
+func VerifyTransaction(sender string, receiver string, amount float64, nonce int, signature, publicKeyHex string) bool {
 
-	txData := fmt.Sprintf("%s%s%f", sender, receiver, amount)
+	txData := fmt.Sprintf("%s%s%f%d", sender, receiver, amount, nonce)
 	hash := sha256.Sum256([]byte(txData))
 
 	sig, err := hex.DecodeString(signature)
@@ -163,11 +164,35 @@ func DisplayTransactions(address string, db *leveldb.DB) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("\nSender\t|\tReceiver\t|\tAmount\t|\tSignature\n")
+	fmt.Printf("\nSender\t|\tReceiver\t|\tMonto\t|\tFirma\n")
 	fmt.Printf("--------------------------------------------------------\n")
 	for _, tx := range transactions {
 		fmt.Printf("%s\t|\t%s\t|\t%f\t|\t%s\n", tx.Sender, tx.Receiver, tx.Amount, tx.Signature)
 		fmt.Printf("--------------------------------------------------------\n")
 	}
 	return nil
+}
+
+func IsNonceValid(address string, newNonce int, blockDB *leveldb.DB) bool {
+	highestNonce := -1
+
+	iter := blockDB.NewIterator(nil, nil)
+	for iter.Next() {
+		blockData := iter.Value()
+
+		var block Block
+		err := json.Unmarshal(blockData, &block)
+		if err != nil {
+			log.Fatal("Error al deserializar el bloque:", err)
+		}
+
+		for _, tx := range block.Transactions {
+			if tx.Sender == address && tx.Nonce > highestNonce {
+				highestNonce = tx.Nonce
+			}
+		}
+	}
+	iter.Release()
+
+	return newNonce > highestNonce
 }
