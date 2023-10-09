@@ -20,7 +20,7 @@ Para utilizar la herramienta se deben seguir los siguientes pasos:
 git clone https://github.com/grafisec/Blockchain-proyect
 ```
 
-Entramos a la carpeta e iniciamos el sistema:
+Se abre la carpeta utilizando visual studio code (sino puede que existan problemas con el limpiar pantalla) e iniciamos el sistema:
 
 ```
 go run main.go
@@ -40,7 +40,7 @@ El sistema cuenta con un total de 6 opciones oficiales, las cuales son:
 
 - **Consultar saldo:** Permite consultar el saldo de una cuenta específica. Se le debe ingresar una dirección válida y el sistema mostará el balance actual de la cuenta.
 
-- **Escribir una transacción:** Permite realizar una transacción y escribirla en un bloque. Se necesitan las direcciones de quién envía y quién recibe, el monto y el nonce de la transacción, además de la llave privada de quién envía para firmar la transacción correctamente. Dicha transacción se escribirá en el último bloque (actualizando su hash por cada transacción que llegue), en caso de que ese bloque esté lleno se creará una nuevo bloque. Al momento de crear el nuevo bloque se pedirá ingresar el número de transacciones que pedirá el bloque, esta opción es temporal para demostrar el funcionamiento de esta entrega.
+- **Escribir una transacción:** Permite realizar una transacción y escribirla en un bloque. Se necesitan las direcciones de quién envía y quién recibe, el monto y el nonce de la transacción, además de la llave privada de quién envía para firmar la transacción correctamente. Dicha transacción se escribirá en el último bloque (actualizando su hash por cada transacción que llegue), en caso de que ese bloque esté lleno se creará una nuevo bloque. Al momento de crear el nuevo bloque se pedirá ingresar por consola el número de transacciones máximas que soportará el bloque, esta opción es temporal para demostrar el funcionamiento de esta entrega.
 
 - **Verificar la firma:** Permite verificar la autenticidad de una transacción. Se requieren los datos de la transacción y la firma para verificarla. En caso de que algún dato no coincida la firma será inválida.
 
@@ -70,11 +70,11 @@ Public Key: 7d6866b740b19acdef6055398dfb2ace996153099471f12f6f1ff19d7856157ddf49
 Address: 0e1dd7f2e5cb568ee13534424aaa978e484df040
 ```
 
-Dicha cuenta también será creada en el momento que no se encuentren los archivos de leveldb.
+Dicha cuenta también será creada en el momento en que no se encuentren los archivos de leveldb.
 
 ### Crear cuenta
 
-Seleccionamos la opción número 1 y tendremos lo siguiente:
+Se selecciona la opción número 1:
 
 ![](img/crear_cuenta.png)
 
@@ -82,10 +82,10 @@ Se observa la llave privada, pública y la dirección. Por obvias razones, la ll
 
 La información de la llave pública y dirección quedarán guardadas en el fichero **accounts.db** para realizar las transacciones y trabajar los saldos de cada cuenta.
 
-Específicamente el archivo **accounts.db** guarda dirección, llave pública y balance de las cuentas. 
+Específicamente el archivo **accounts.db** guarda la dirección, llave pública y balance de las cuentas. 
 
 
-### Consultar saldo de una cuenta
+### Consultar el saldo de una cuenta
 
 Como se mencionó anteriormente, esta opción permite saber el saldo de una cuenta proporcionando una dirección. 
 
@@ -166,7 +166,7 @@ En este caso, el último nonce utilizado había sido 10.
 
 ### Verificar la firma de una transacción.
 
-Se deben ingresar toda la información respecto a la transacción, como se muestra a continuación:
+Se debe ingresar toda la información de la transacción, como se muestra a continuación:
 
 ![](img/verificar_firma_1.png)
 
@@ -178,7 +178,7 @@ Si se cambia algún valor:
 
 Se observa que no es válida, pues se ha modificado el monto. Obviamente eso pasaría si se modifica cualquier valor.
 
-Para validar una firma se necesita la llave pública, en este caso el sistema la busca en su sistema de cuentas, por eso no es necesario pasarle dicha llave.
+Para validar una firma se necesita la llave pública, en este caso el sistema la busca en el fichero accounts.db, por eso no es necesario pasarle dicha llave.
 
 Esta sección solo tiene la validación para el sender, el resto no tiene para poder modificar los valores y así obtener verificaciones de firmas inválidas.
 
@@ -199,7 +199,7 @@ Si se ingresa la cuenta génesis:
 Se tienen todas las transacciones que ha hecho y recibido.
 
 
-### búsqueda de bloque específica usando ID.
+### búsqueda de bloque específico usando ID.
 
 Se proporciona el ID 2:
 
