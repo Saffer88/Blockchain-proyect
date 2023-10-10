@@ -117,7 +117,7 @@ Se ingresa el valor de 5.
 
 ![](img/limite_de_transacciones.png)
 
-Finalmente, retorna el bloque con la transacción escrita en él para evidenciar el funcionamiento.
+Finalmente, retorna el bloque con la transacción escrita en él para evidenciar el funcionamiento. Se observa el correcto limite y el hash previo, que corresponde al del bloque anterior.
 
 Vamos a realizar otra transacción:
 
