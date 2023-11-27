@@ -13,10 +13,13 @@ import (
 func main() {
 	logic.Def_handler()
 
+	go logic.InitNode()
+
 	db, err := leveldb.OpenFile("./blocks.db", nil)
 	if err != nil {
 		panic(err)
 	}
+	logic.SetGlobalDB(db)
 	defer db.Close()
 	logic.CreateGenesis(db) // Evaluamos si es necesario crear el bloque genesis
 	for {                   // despliegue de las opciones
@@ -77,6 +80,7 @@ func main() {
 					break
 				}
 				fmt.Printf("\nEl saldo de la dirección %s es: %.5f\n", address, balance)
+
 				logic.PressEnter()
 
 			case "3":
