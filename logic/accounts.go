@@ -66,6 +66,10 @@ func CreateAccount() {
 			return
 		}
 		jsonStr := string(jsonBytes)
+<<<<<<< HEAD
+=======
+		// Luego, puedes enviar jsonStr a través de writeTransaction
+>>>>>>> 539ddc384b98a1512728b8c9b87789e5cca69d1d
 		Broadcast(jsonStr)
 	}
 }

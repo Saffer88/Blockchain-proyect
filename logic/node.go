@@ -40,11 +40,18 @@ func InitNode() {
 		panic(err)
 	}
 	defer host.Close()
+<<<<<<< HEAD
 	hostG = host
 
 	// Print this node's addresses and ID
 	//fmt.Println("Addresses:", host.Addrs())
 	//fmt.Println("ID:", host.ID())
+=======
+
+	// Print this node's addresses and ID
+	fmt.Println("Addresses:", host.Addrs())
+	fmt.Println("ID:", host.ID())
+>>>>>>> 539ddc384b98a1512728b8c9b87789e5cca69d1d
 
 	// Setup a stream handler.
 	//
@@ -60,6 +67,10 @@ func InitNode() {
 		log.Fatal(err)
 	}
 	defer s.Close()
+<<<<<<< HEAD
+=======
+	hostG = host
+>>>>>>> 539ddc384b98a1512728b8c9b87789e5cca69d1d
 
 	sigCh := make(chan os.Signal)
 	signal.Notify(sigCh, syscall.SIGKILL, syscall.SIGINT)
@@ -129,7 +140,11 @@ func readTransaction(s network.Stream) error {
 
 				switch int(mode) {
 				case 1:
+<<<<<<< HEAD
 					fmt.Println("Modo 1 - Mensaje JSON recibido:", msg)
+=======
+					//fmt.Println("Modo 1 - Mensaje JSON recibido:", msg)
+>>>>>>> 539ddc384b98a1512728b8c9b87789e5cca69d1d
 
 					var jsonData map[string]interface{}
 					if err := json.Unmarshal([]byte(msg), &jsonData); err != nil {
@@ -155,6 +170,7 @@ func readTransaction(s network.Stream) error {
 
 					fmt.Println("Modo 2 - Mensaje JSON recibido:", msg)
 
+<<<<<<< HEAD
 					lastBlock, err := GetLastBlock(globalDB)
 					if err != nil {
 						fmt.Println("\nError al obtener el último bloque", err)
@@ -188,10 +204,13 @@ func readTransaction(s network.Stream) error {
 						panic(err)
 					}
 
+=======
+>>>>>>> 539ddc384b98a1512728b8c9b87789e5cca69d1d
 				case 3:
 
 					fmt.Println("Modo 3 - Mensaje JSON recibido:", msg)
 
+<<<<<<< HEAD
 					lastBlock, err := GetLastBlock(globalDB)
 					if err != nil {
 						fmt.Println("\nError al obtener el último bloque", err)
@@ -234,6 +253,8 @@ func readTransaction(s network.Stream) error {
 						panic(err)
 					}
 
+=======
+>>>>>>> 539ddc384b98a1512728b8c9b87789e5cca69d1d
 				default:
 					fmt.Println("Modo no válido:", mode)
 				}
@@ -276,6 +297,7 @@ func Broadcast(txJSON string) {
 			continue
 		}
 
+<<<<<<< HEAD
 		err := hostG.Connect(context.Background(), peerInfo)
 		if err != nil {
 			//fmt.Println("Error al conectar con el peer", peerID, ":", err)
@@ -283,6 +305,16 @@ func Broadcast(txJSON string) {
 		}
 
 		//fmt.Println("Conectado exitosamente con el peer", peerID)
+=======
+		// Conectar al par
+		err := hostG.Connect(context.Background(), peerInfo)
+		if err != nil {
+			fmt.Println("Error al conectar con el peer", peerID, ":", err)
+			continue
+		}
+
+		fmt.Println("Conectado exitosamente con el peer", peerID)
+>>>>>>> 539ddc384b98a1512728b8c9b87789e5cca69d1d
 
 		stream, err := hostG.NewStream(context.Background(), peerID, protocolID)
 		if err != nil {
@@ -298,6 +330,7 @@ func Broadcast(txJSON string) {
 
 	}
 }
+<<<<<<< HEAD
 
 type transactionJSON struct {
 	Mode      int     `json:"Mode"`
@@ -331,3 +364,5 @@ func NewTransactionNodes(sender, receiver string, amount float64, signature stri
 	return nil
 
 }
+=======
+>>>>>>> 539ddc384b98a1512728b8c9b87789e5cca69d1d
