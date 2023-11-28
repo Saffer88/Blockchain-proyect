@@ -23,3 +23,17 @@
 20:04:21.153515 db@janitor F·3 G·0
 20:04:21.153515 db@open done T·15.1783ms
 >>>>>>> 539ddc384b98a1512728b8c9b87789e5cca69d1d
+=============== Nov 28, 2023 (-03) ===============
+20:47:20.077348 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+20:47:20.106056 version@stat F·[] S·0B[] Sc·[]
+20:47:20.106056 db@open opening
+20:47:20.106056 journal@recovery F·2
+20:47:20.107611 journal@recovery recovering @1
+20:47:20.111258 journal@recovery recovering @3
+20:47:20.113828 memdb@flush created L0@4 N·1 S·381B "1,v1":"1,v1"
+20:47:20.113828 version@stat F·[1] S·381B[381B] Sc·[0.25]
+20:47:20.122816 version@stat F·[1] S·381B[381B] Sc·[0.25]
+20:47:20.124994 db@janitor F·5 G·2
+20:47:20.124994 db@janitor removing table-2
+20:47:20.125509 db@janitor removing manifest-4
+20:47:20.125509 db@open done T·19.4539ms
