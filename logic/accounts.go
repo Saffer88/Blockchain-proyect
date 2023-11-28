@@ -19,6 +19,12 @@ type Account struct {
 	Balance   float64
 }
 
+type AccountJSON struct {
+	Mode      int    `json:"Mode"`
+	PublicKey string `json:"public key"`
+	Address   string `json:"Address"`
+}
+
 func CreateAccount() {
 	entropy, err := bip39.NewEntropy(256)
 	if err != nil {
@@ -40,7 +46,7 @@ func CreateAccount() {
 		publicKeyHex := fmt.Sprintf("%x%x", privateKey.PublicKey.X, privateKey.PublicKey.Y)
 		addressHex := fmt.Sprintf("%x", address)
 
-		err := SaveAccountToDB(addressHex, publicKeyHex, 0)
+		err := SaveAccountToDB(addressHex, publicKeyHex, 1000)
 		if err != nil {
 			fmt.Println("Error al guardar la cuenta en la base de datos: ", err)
 		}
@@ -49,6 +55,18 @@ func CreateAccount() {
 		fmt.Printf("Public Key: %s\n", publicKeyHex)
 		fmt.Printf("Address: %s\n", addressHex)
 
+		Accountjson := AccountJSON{
+			Mode:      1,
+			PublicKey: publicKeyHex,
+			Address:   addressHex,
+		}
+		jsonBytes, err := json.Marshal(Accountjson)
+		if err != nil {
+			fmt.Println("Error al convertir la estructura en JSON:", err)
+			return
+		}
+		jsonStr := string(jsonBytes)
+		Broadcast(jsonStr)
 	}
 }
 

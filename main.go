@@ -13,10 +13,13 @@ import (
 func main() {
 	logic.Def_handler()
 
+	go logic.InitNode()
+
 	db, err := leveldb.OpenFile("./blocks.db", nil)
 	if err != nil {
 		panic(err)
 	}
+	logic.SetGlobalDB(db)
 	defer db.Close()
 	logic.CreateGenesis(db) // Evaluamos si es necesario crear el bloque genesis
 	for {                   // despliegue de las opciones
@@ -77,6 +80,7 @@ func main() {
 					break
 				}
 				fmt.Printf("\nEl saldo de la dirección %s es: %.5f\n", address, balance)
+
 				logic.PressEnter()
 
 			case "3":
@@ -145,6 +149,8 @@ func main() {
 					fmt.Print("\nIndique el límite de transacciones del bloque: ")
 					var limit int
 					fmt.Scanln(&limit)
+					signature, nil := logic.Signatures(address, receiver, amount, priv, nonce)
+					logic.NewTransactionNodes(address, receiver, amount, signature, nonce, limit, 3)
 
 					transactions := []logic.Transaction{*newTransaction}
 					newblock := logic.GenerateBlock(db, transactions, limit)
@@ -171,6 +177,9 @@ func main() {
 						fmt.Println("\nError al obtener el último bloque", err)
 						panic(err)
 					}
+					signature, err := logic.Signatures(address, receiver, amount, priv, nonce)
+
+					logic.NewTransactionNodes(address, receiver, amount, signature, nonce, 0, 2)
 
 					logic.AddTransaction(&lastBlock, *newTransaction)
 					logic.UpdateBlockHash(&lastBlock) // actualizamos el hash con las nuevas transacciones

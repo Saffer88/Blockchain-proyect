@@ -196,3 +196,32 @@ func IsNonceValid(address string, newNonce int, blockDB *leveldb.DB) bool {
 
 	return newNonce > highestNonce
 }
+
+func Signatures(sender string, receiver string, amount float64, privateKeyHex string, nonce int) (string, error) {
+
+	verify := VerifyBalance(sender, amount)
+
+	if !verify {
+		fmt.Println("\nNo existe el saldo suficiente en la cuenta.")
+		return "", nil
+	}
+
+	privateKeyBytes, err := hex.DecodeString(privateKeyHex)
+	if err != nil {
+		return "", err
+	}
+
+	privateKey, err := crypto.ToECDSA(privateKeyBytes)
+	if err != nil {
+		return "", err
+	}
+
+	txData := fmt.Sprintf("%s%s%f%d", sender, receiver, amount, nonce)
+	hash := sha256.Sum256([]byte(txData))
+
+	sig, err := crypto.Sign(hash[:], privateKey) // firma
+	if err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(sig), nil
+}
