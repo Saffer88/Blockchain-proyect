@@ -129,7 +129,7 @@ func readTransaction(s network.Stream) error {
 
 				switch int(mode) {
 				case 1:
-					fmt.Println("Modo 1 - Mensaje JSON recibido:", msg)
+					//fmt.Println("Modo 1 - Mensaje JSON recibido:", msg)
 
 					var jsonData map[string]interface{}
 					if err := json.Unmarshal([]byte(msg), &jsonData); err != nil {
@@ -153,7 +153,7 @@ func readTransaction(s network.Stream) error {
 
 				case 2:
 
-					fmt.Println("Modo 2 - Mensaje JSON recibido:", msg)
+					//fmt.Println("Modo 2 - Mensaje JSON recibido:", msg)
 
 					lastBlock, err := GetLastBlock(globalDB)
 					if err != nil {
@@ -190,7 +190,7 @@ func readTransaction(s network.Stream) error {
 
 				case 3:
 
-					fmt.Println("Modo 3 - Mensaje JSON recibido:", msg)
+					//fmt.Println("Modo 3 - Mensaje JSON recibido:", msg)
 
 					lastBlock, err := GetLastBlock(globalDB)
 					if err != nil {
